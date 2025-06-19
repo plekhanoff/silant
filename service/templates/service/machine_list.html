@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+<head>
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'service/machine_list.css' %}">
+{% endblock %}
+{% block title %}Список машин{% endblock %}
+</head>
+<body>
+{% block content %}
+<div class="content">
+    <div class="client">  
+    {% if user.is_authenticated %}
+        <div class="user-info">
+            <span>Пользователь/{{ user.username }}</span>
+        </div>
+    {% else %}
+        <a href="{% url 'account_login' %}" class="btn-login">
+            <button type="button" class="button-class">Войти</button>
+        </a>
+    {% endif %}
+    </div>    
+    <div class="info">
+        <p>Информация о комплектации и технических характеристиках Вашей техники</p>
+    </div>
+    <nav class="navbarnaft">
+        <ul>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:machine_list' %}">Общая информация</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:maintenance_list' %}">ТО</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:complaint_list' %}">Рекламации</a>
+            </li>
+        </ul>
+     </nav>   
+<div class="machine-table">
+<table class="table">
+    <thead>
+        <tr>
+            <th>Зав. № машины</th>
+            <th>Модель техники</th>
+            <th>Модель двигателя</th>
+            <th>Зав. № двигателя</th>
+            <th>Модель трансмиссии</th>
+            <th>Зав. № трансмиссии</th>
+            <th>Модель ведущего моста</th>
+            <th>Зав. № ведущего моста</th>
+            <th>Модель управляемого моста</th>
+            <th>Зав. № управляемого моста</th>
+            <th>Договор поставки №, дата</th>
+            <th>Дата отгрузки с завода</th>
+            <th>Грузополучатель</th>
+            <th>Адрес поставки</th>
+            <th>Комплектация</th>
+            <th>Клиент</th>
+            <th>Сервисная компания</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for machine in machines %}
+        <tr>
+           <td>   {% if machine %}
+                <a href="{% url 'service:machine_detail' machine.id %}" class="btn btn-primary">
+                    {{ machine.factory_number }}
+                </a>
+           {% else %}
+        Нет данных о машине
+            {% endif %}</td>
+
+            <td>
+                  <a href="#" class="open-reference"
+                    data-entity="{{ machine.model_ref.entity_name }}"
+                    data-name="{{ machine.model_ref.name }}"
+                    data-description="{{ machine.model_ref.description|escapejs }}">
+                    {{ machine.model }}
+                    </a>
+
+            </td>
+            <td>
+                <a href="#" class="open-reference"
+                    data-entity="{{ machine.engine_model_ref.entity_name }}"
+                    data-name="{{ machine.engine_model_ref.name }}"
+                    data-description="{{ machine.engine_model_ref.description|escapejs }}">
+                    {{ machine.engine_model }}
+                </a>
+
+            </td>
+            <td>{{ machine.engine_serial_number }}</td>  
+            <td><a href="#" class="open-reference" 
+                   data-entity="Модель трансмиссии" 
+                   data-name="{{ machine.transmission_model }}" 
+                   data-description="{{ machine.transmission_model_ref.description }}"> <!-- Добавляем описание -->
+                    {{ machine.transmission_model }}  <!-- Отображаем название модели двигателя -->
+                  </a></td>
+            <td>{{ machine.transmission_serial_number }}</td> 
+            <td>
+                 <a href="#" class="open-reference"
+                    data-entity="{{ machine.front_axle_model_ref.entity_name }}"
+                    data-name="{{ machine.front_axle_model_ref.name }}"
+                    data-description="{{ machine.front_axle_model_ref.description|escapejs }}">
+                    {{ machine.front_axle_model }}
+                </a>
+            </td>
+            <td>{{ machine.front_axle_serial_number }}</td> 
+            <td>  <a href="#" class="open-reference"
+                    data-entity="{{ machine.rear_axle_model_ref.entity_name }}"
+                    data-name="{{ machine.rear_axle_model_ref.name }}"
+                    data-description="{{ machine.rear_axle_model_ref.description|escapejs }}">
+                    {{ machine.rear_axle_model }}<!-- Отображаем название модели двигателя -->
+                  </a>
+                </td>
+            <td>{{ machine.rear_axle_serial_number }}</td>  
+            <td>{{ machine.supply_contract_number }}</td> 
+            <td>{{ machine.shipment_date }}</td>
+            <td>{{ machine.consignee }}</td> 
+            <td>{{ machine.delivery_address }}</td>  
+            <td>{{ machine.equipment }}</td>  
+            <td>{{ machine.client_ref }}</td>  
+            <td><a href="#" class="open-reference"
+                    data-entity="{{ machine.service_company_ref.entity_name }}"
+                    data-name="{{ machine.service_company_ref.name }}"
+                    data-description="{{ machine.service_company_ref.description|escapejs }}">
+                {{ machine.service_company_ref }}</td>  
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="17">Нет данных</td>
+        </tr>
+        {% endfor %}
+
+<!-- Модальное окно -->
+<div class="modal fade" id="referenceModal" tabindex="-1" aria-labelledby="referenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="referenceModalLabel">Справочная информация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+               <p><strong>Название сущности:</strong> <span id="entityName"></span></p>
+                <p><strong>Название:</strong> <span id="referenceName"></span></p>
+                <p><strong>Описание:</strong></p>
+                <p id="referenceDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $('.open-reference').click(function(e) {
+        e.preventDefault();
+        const entity = $(this).data('entity');
+        const name = $(this).data('name');
+        const description = $(this).data('description');
+
+        $('#entityName').text(entity);
+        $('#referenceName').text(name);
+        $('#referenceDescription').text(description);
+        $('#referenceModal').modal('show');
+    });
+});
+</script>
+
+
+
+    </tbody>
+</table>
+<div class="mb-3">
+    {% if user.is_authenticated and user.userprofile.role == 'pr' %}
+        <a href="{% url 'service:add_machine' %}" class="nav-link nav-btn">Добавить машину</a>
+    {% endif %}
+</div>
+
+<div class="mb-3">
+    {% if user.is_authenticated and user.userprofile.role == 'pr' %}
+        <a href="{% url 'service:reference_list' %}" class="nav-link nav-btn">Редактировать справочники</a>
+    {% endif %}
+</div>
+
+</div>
+</div>
+{% endblock %}
+</body>

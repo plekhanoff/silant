@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+<head>
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'service/add_complaint.css' %}">
+{% endblock %}    
+{% block title %}Добавить отказ{% endblock %}
+</head>
+<body>
+{% block content %}
+<h1>Добавить отказ</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <div class="mb-3">
+     <a href="{% url 'service:complaint_list' %}" class="nav-link nav-btn">Назад</a>
+ </div>
+</form>
+{% endblock %}
+</body>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Сервис Силант{% endblock %}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}"> 
+</head>
+<body>   
+<nav class="navbar navbar-expand-lg navbar-light bg-light w-100 fixed-top">
+<div class="custom-nav">
+    <a class="navbar-brand" href="{% url 'service:welcome' %}">
+    <img src="{% static 'service/img/rectangleLogo.ai' %}" alt="Логотип Силант" style="height: 40px;">
+</a>
+    <h2>Электронная сервисная книжка "Мой Cилант"</h2>
+                {% if user.is_authenticated %}
+                <div class="user-info">
+                            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link">Выйти</button>
+                            </form>
+                </div>
+                 {% else %}
+                       <p class="p">     Осуществите <a href="{% url 'service:request_signup' %}">вход</a>.</p>
+                 {% endif %}
+            </li>
+        </ul>
+    </div>
+</div>
+</nav>
+<div class="container" style="padding-top: 70px;">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% include 'service/footer.html' %}
+
+</body>
+</html>

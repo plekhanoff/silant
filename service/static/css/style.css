@@ -1,0 +1,14 @@
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f9d3d3;
+}
+.navbar-brand {
+    display: flex;
+    border-radius: 30px;
+
+}
+.navbar-nav .nav-item {
+    flex: 1 1 0;
+    text-align: center;
+}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'service/maintenance_list.css' %}">
+{% endblock %}
+
+{% block title %}Добавить машину{% endblock %}
+
+{% block content %}
+<h1>Pедактирование данных TO</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+<a href="{% url 'service:maintenance_list' %}" class="nav-link nav-btn">Назад</a>
+{% endblock %}

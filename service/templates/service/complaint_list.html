@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+<head>
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'service/complaint_list.css' %}">
+{% endblock %}    
+{% block title %}Список рекламаций{% endblock %}
+
+{% block content %}
+
+</head>
+<body>
+<div class="client">  
+    {% if user.is_authenticated %}
+        <div class="user-info">
+            <span>Пользователь/{{ user.username }}</span>
+        </div>
+    {% else %}
+        <a href="{% url 'account_login' %}" class="btn-login">
+            <button type="button" class="button-class">Войти</button>
+        </a>
+    {% endif %}
+    </div>    
+    <div class="info">
+        <p>Рекламации</p>
+    </div>
+    <nav class="navbarnaft">
+        <ul>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:machine_list' %}">Общая информация</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:maintenance_list' %}">ТО</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-btn" href="{% url 'service:complaint_list' %}">Рекламации</a>
+            </li>
+        </ul>
+     </nav>
+<form method="post">
+{% comment %} {% csrf_token %} {% endcomment %}
+<div class="complaint-table">
+<table class="table">
+    <thead>
+        <tr>
+            <th>выбор</th>
+            <th>Зав. № машины</th>
+            <th>Узел отказа</th>
+            <th>Способ восстановления</th>
+            <th>Дата отказа</th>
+            <th>Дата восстановления</th>
+            <th>Сервисная компания</th>  
+            <th>Наработка м/часов</th>
+            <th>Время простоя техники</th>
+            <th>Описание отказа</th>
+            <th>Использовавшиеся запчасти </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for complaint in complaints %}
+        <tr>
+            <td>
+                <div class="custom-radio">
+                    <input type="radio"  id="complaint{{ complaint.id }}" name="complaint_id" value="{{ complaint.id }}">
+                </div>
+            </td>
+            <td>   {% if complaint.machine %}
+        <a href="{% url 'service:machine_detail' complaint.machine.id %}" class="btn btn-primary">
+            {{ complaint.machine.factory_number }}
+        </a>
+           {% else %}
+               Нет данных о машине
+            {% endif %}</td>
+            <td>
+                 <a href="#" class="open-reference"
+                    data-entity="{{complaint.failure_node_ref.entity_name }}"
+                    data-name="{{ complaint.failure_node_ref.name }}" 
+                    data-description="{{ complaint.failure_node_ref.description|escapejs }}">
+                    {{ complaint.failure_node_ref }}
+                </a>
+                </td>
+            <td>
+                <a href="#" class="open-reference"
+                    data-entity="{{ complaint.recovery_method_ref.entity_name }}"
+                    data-name="{{ complaint.recovery_method_ref.name }}"
+                    data-description="{{ complaint.recovery_method_ref.description|escapejs }}">
+                    {{ complaint.recovery_method_ref }}
+                </a>
+            </td>
+            <td>{{ complaint.claim_date }}</td>
+            <td>{{ complaint.recovery_date }}</td>
+            <td>
+                 <a href="#" class="open-reference"
+                    data-entity="{{ complaint.service_company_ref.entity_name }}"
+                    data-name="{{ complaint.service_company_ref.name }}"
+                    data-description="{{ complaint.service_company_ref.description|escapejs }}">
+                    {{ complaint.service_company_ref }}
+                </a>
+                </td>
+            <td>{{ complaint.operating_hours }}</td>
+            <td>{{ complaint.downtime_hours }}</td>
+            <td>{{ complaint.failure_description }}</td>
+            <td>{{ complaint.spare_parts_used }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Нет данных о рекламациях.</td>
+        </tr>
+        {% endfor %}
+<div class="modal fade" id="referenceModal" tabindex="-1" aria-labelledby="referenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="referenceModalLabel">Справочная информация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+               <p><strong>Название сущности:</strong> <span id="entityName"></span></p>
+                <p><strong>Название:</strong> <span id="referenceName"></span></p>
+                <p><strong>Описание:</strong></p>
+                <p id="referenceDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $('.open-reference').click(function(e) {
+        e.preventDefault();
+        const entity = $(this).data('entity');
+        const name = $(this).data('name');
+        const description = $(this).data('description');
+
+        $('#entityName').text(entity);
+        $('#referenceName').text(name);
+        $('#referenceDescription').text(description);
+        $('#referenceModal').modal('show');
+    });
+});
+</script>
+
+    </tbody>
+</table>
+</body>
+ <div class="mb-3">
+     <a href="{% url 'service:add_complaint' %}" class="nav-link nav-btn">Добавить рекламацию</a>
+ </div>
+ {% if user.userprofile.role in allowed_roles %}
+    <button type="submit" class="nav-link nav-btn">Редактировать выбранную рекламацию</button>
+{% endif %}
+</div>
+</form>
+{% endblock %}

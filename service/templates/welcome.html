@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/welcome.css' %}">
+{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+{% endif %} 
+<div class="search">
+     <a class="nav-link nav-btn" href="{% url 'service:welcome' %}">Попробовать поиск по заводскому номеру машины</a>
+</div>
+<body>
+     <div class="info">
+    <p>Поиск информации о комплектации и технических характеристиках техники</p>
+  </div>
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Поиск</button>
+    </form>
+
+{% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+{% elif machine %}
+    <h2>Данные о машине:</h2>
+    <table>
+        <tr>
+            <th>Заводской номер</th>
+            <td>{{ machine.factory_number }}</td>
+        </tr>
+        <tr>
+            <th>Модель</th>
+            <td>{{ machine.model }}</td>
+        </tr>
+        <tr>
+            <th>Модель двигателя</th>
+            <td>{{ machine.engine_model }}</td>
+        </tr>
+        <tr>
+            <th>Номер двигателя</th>
+            <td>{{ machine.engine_serial_number }}</td>
+        </tr>
+        <tr>
+            <th>Модель трансмиссии</th>
+            <td>{{ machine.transmission_model }}</td>
+        </tr>
+        <tr>
+            <th>Номер трансмиссии</th>
+            <td>{{ machine.transmission_serial_number }}</td>
+        </tr>
+        <tr>
+            <th>Дата отгрузки</th>
+            <td>{{ machine.shipment_date }}</td>
+        </tr>
+        <tr>
+            <th>Описание</th>
+            <td>{{ machine.equipment }}</td>
+        </tr>
+        <!-- Добавьте остальные поля по необходимости -->
+    </table>
+{% elif form.data %}
+    <p>Машина не найдена.</p>
+{% endif %}
+{% if user.is_authenticated %}
+ <div class="nav-item">
+    <a class="nav-link nav-btn" href="{% url 'service:machine_list' %}">К просмотру информации</a>
+ </div>
+{% endif %}
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'service/machine_detail.css' %}">
+{% endblock %}    
+
+{% block title %}Детали машины{% endblock %}
+
+{% block content %}
+<h1>Детали машины: {{ machine.factory_number }}</h1>
+
+<table class="table">
+    <tr>
+        <th>Модель техники</th>
+        <td>{{ machine.model }}</td>
+    </tr>
+    <tr>
+        <th>Номер двигателя</th>
+        <td>{{ machine.engine_serial_number }}</td>
+    </tr>
+    <tr>
+        <th>Модель двигателя</th>
+        <td>{{ machine.engine_model }}</td>
+    </tr>
+    <tr>
+        <th>Номер трасмиссии</th>
+        <td>{{ machine.transmission_serial_number }}</td>
+    </tr>
+    <tr>
+        <th>Модель трансмиссии</th>
+        <td>{{ machine.transmission_model }}</td>
+    </tr>
+    <tr>
+        <th>Модель управляемого моста</th>
+        <td>{{ machine.front_axle_model }}</td>
+    </tr>
+    <tr>
+        <th>Номер управляемого моста</th>
+        <td>{{ machine.front_axle_serial_number }}</td>
+    </tr>
+    <tr>
+        <th>Модель ведущего моста</th>
+        <td>{{ machine.rear_axle_model }}</td>
+    </tr>
+    <tr>
+        <th>Номер ведущего моста</th>
+        <td>{{ machine.rear_axle_serial_number }}</td>
+    </tr>
+    <tr>
+        <th>Дата отгрузки с завода</th>
+        <td>{{ machine.shipment_date }}</td>
+    </tr>
+    <tr>
+        <th>Описание</th>
+        <td>{{ machine.description }}</td>
+    </tr>
+</table>
+<a href="{% url 'service:machine_list' %}" class="btn btn-primary">Назад к списку машин</a>
+
+{% endblock %}
